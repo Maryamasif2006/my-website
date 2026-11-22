@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ur-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chai Dhaba</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: truck-art dhaba. Bold teal hero with striped edge, then a live chai maker (cup + controls), menu board, house rules. */
+:root{
+  --bg:#F2F7F4; --surface:#FFFFFF; --fg:#14292A; --muted:#47625F; --line:#C5D8D2;
+  --accent:#D81B72; --accent-fg:#FFFFFF; --gold:#F2A516; --teal:#0B6B63;
+  --hero-bg:#0B6B63; --hero-fg:#FFF4D6; --hero-muted:#BFE3DC;
+  --f-display:"Bowlby One","Arial Black",Impact,sans-serif;
+  --f-body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"DM Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0C1A1A; --surface:#132625; --fg:#EEF3EE; --muted:#9FB8B3; --line:#244240;
+    --accent:#FF5CA8; --accent-fg:#1A0610; --gold:#FFC043; --teal:#2FB5A6;
+    --hero-bg:#0E3B38; --hero-fg:#FFF4D6; --hero-muted:#9FD3CB; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0C1A1A; --surface:#132625; --fg:#EEF3EE; --muted:#9FB8B3; --line:#244240;
+  --accent:#FF5CA8; --accent-fg:#1A0610; --gold:#FFC043; --teal:#2FB5A6;
+  --hero-bg:#0E3B38; --hero-fg:#FFF4D6; --hero-muted:#9FD3CB; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;line-height:1.05;margin:0;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:1040px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.label{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase}
+
+/* hero */
+.hero{background:var(--hero-bg);color:var(--hero-fg);margin-top:calc(-1 * env(safe-area-inset-top,0px));padding-top:calc(env(safe-area-inset-top,0px) + 2.5rem);padding-bottom:3.5rem;position:relative}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;
+  background:repeating-linear-gradient(90deg,var(--gold) 0 28px,var(--accent) 28px 56px,var(--hero-fg) 56px 84px,var(--teal) 84px 112px)}
+.open{display:inline-flex;align-items:center;gap:.6rem;border:2px solid var(--gold);color:var(--gold);padding:.3rem .8rem;border-radius:999px}
+.dot{width:.6rem;height:.6rem;border-radius:50%;background:var(--gold);animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+.hero h1{font-size:clamp(2.6rem,9vw,5.6rem);margin-top:1.4rem;max-width:12ch}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p.lead{margin-top:1.3rem;max-width:46ch;font-size:1.1rem;color:var(--hero-muted)}
+.hero a.go{display:inline-block;margin-top:1.8rem;background:var(--gold);color:#14292A;font-weight:700;text-decoration:none;padding:.85rem 1.4rem;border-radius:6px}
+.hero a.go:hover{filter:brightness(1.08)}
+
+section{padding-block:3.5rem}
+.sec-head{display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
+.sec-head h2{font-size:clamp(1.8rem,5vw,2.8rem)}
+.sec-head p{color:var(--muted);max-width:56ch}
+
+/* maker */
+.maker{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:2rem;align-items:start}
+.stage{background:var(--surface);border:2px solid var(--fg);border-radius:10px;padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem;min-width:0}
+.cup{width:min(100%,300px);height:auto}
+.cup .steam path{fill:none;stroke:var(--muted);stroke-width:4;stroke-linecap:round;opacity:.55;animation:rise 3s ease-in-out infinite}
+.cup .steam path:nth-child(2){animation-delay:.8s}.cup .steam path:nth-child(3){animation-delay:1.6s}
+@keyframes rise{0%{transform:translateY(8px);opacity:0}40%{opacity:.6}100%{transform:translateY(-14px);opacity:0}}
+#liquid{transition:y .5s ease,height .5s ease,fill .5s ease}
+.name{font-family:var(--f-display);font-size:1.5rem;text-align:center;line-height:1.1}
+.sub{color:var(--muted);text-align:center;font-size:.95rem}
+.meters{width:100%;display:grid;gap:.6rem}
+.meter{display:grid;grid-template-columns:7rem 1fr;gap:.8rem;align-items:center}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s ease}
+.bar.g i{background:var(--gold)}
+
+.controls{display:grid;gap:1.4rem;min-width:0}
+fieldset{border:0;padding:0;margin:0;min-width:0}
+legend{padding:0;margin-bottom:.5rem}
+.seg{display:flex;flex-wrap:wrap;gap:.5rem}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{border:2px solid var(--fg);border-radius:6px;padding:.5rem .9rem;cursor:pointer;font-weight:500;background:var(--surface);user-select:none}
+.seg input:checked+label{background:var(--fg);color:var(--bg)}
+.seg input:focus-visible+label{outline:3px solid var(--accent);outline-offset:2px}
+.seg label:hover{border-color:var(--accent)}
+.step{display:inline-flex;align-items:center;border:2px solid var(--fg);border-radius:6px;overflow:hidden;background:var(--surface)}
+.step button{width:2.8rem;height:2.6rem;border:0;background:transparent;color:var(--fg);font-size:1.4rem;cursor:pointer;font-family:var(--f-body)}
+.step button:hover{background:var(--line)}
+.step button:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.step output{min-width:6.5rem;text-align:center;font-family:var(--f-mono);padding-inline:.5rem}
+
+.total{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;border-top:2px dashed var(--line);padding-top:1.2rem}
+.price{font-family:var(--f-display);font-size:2.2rem}
+.price small{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);margin-left:.3rem}
+button.primary{background:var(--accent);color:var(--accent-fg);border:0;border-radius:6px;padding:.9rem 1.5rem;font-weight:700;font-size:1rem;cursor:pointer;font-family:var(--f-body)}
+button.primary:hover{filter:brightness(1.08)}
+button.primary:focus-visible,button.ghost:focus-visible{outline:3px solid var(--fg);outline-offset:3px}
+button.ghost{background:transparent;border:2px solid var(--fg);color:var(--fg);border-radius:6px;padding:.5rem .9rem;cursor:pointer;font-family:var(--f-body);font-weight:500}
+
+.slip{margin-top:1.5rem;background:var(--surface);border:2px dashed var(--fg);border-radius:4px;padding:1.2rem 1.4rem;display:grid;gap:.6rem}
+.slip[hidden]{display:none}
+.slip h3{font-size:1.3rem}
+.slip pre{margin:0;font-family:var(--f-mono);font-size:.9rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.slip .row{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center}
+
+/* menu */
+.board{background:var(--teal);color:#FFF8E1;border-radius:10px;padding:clamp(1.2rem,4vw,2.4rem)}
+:root[data-theme="dark"] .board{background:#0E3B38}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .board{background:#0E3B38}}
+.menu{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:0 3rem}
+.menu li{display:grid;grid-template-columns:1fr auto;gap:.2rem 1rem;padding:1rem 0;border-bottom:1px dashed rgba(255,248,225,.35)}
+.menu b{font-size:1.1rem}
+.menu span.d{grid-column:1;color:#CDEBE5;font-size:.92rem}
+.menu span.p{grid-row:1;grid-column:2;font-family:var(--f-mono);color:var(--gold);font-weight:500}
+.note{margin-top:1.2rem;font-family:var(--f-mono);font-size:.78rem;color:#CDEBE5}
+
+/* rules */
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1.2rem}
+.rule{border:2px solid var(--fg);border-radius:10px;padding:1.3rem;background:var(--surface);display:grid;gap:.6rem;min-width:0}
+.rule h3{font-size:1.25rem}
+.rule p{color:var(--muted)}
+.rule .tag{color:var(--accent)}
+
+footer{border-top:14px solid transparent;border-image:repeating-linear-gradient(90deg,var(--gold) 0 28px,var(--accent) 28px 56px,var(--teal) 56px 84px) 1;padding-block:2rem;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 2rem;justify-content:space-between}
+
+@media (prefers-reduced-motion: reduce){
+  .dot,.cup .steam path{animation:none}
+  #liquid,.bar i{transition:none}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="open label"><span class="dot"></span>Khula hai · 24 ghante</span>
+    <h1>Kadak chai, <em>raat bhar.</em></h1>
+    <p class="lead">Apni chai khud banao. Patti, doodh, cheeni aur masalay chuno. Cup aap ke samne tayar hota hai, qeemat saath saath badalti hai.</p>
+    <a class="go" href="#banao">Chai banao</a>
+  </div>
+</header>
+
+<main>
+<section id="banao">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="label" style="color:var(--accent)">Chai banane ki jagah</span>
+      <h2>Aap ka cup, aap ka hisaab</h2>
+      <p>Neeche ke options badlo. Cup ka rang, level aur total foran badal jata hai.</p>
+    </div>
+
+    <div class="maker">
+      <div class="stage">
+        <svg class="cup" viewBox="0 0 240 220" role="img" aria-label="Chai ka cup jo aap ke chune hue options ke mutabiq bharta hai">
+          <defs><clipPath id="inside"><path d="M50 70H170V128Q170 176 110 176Q50 176 50 128Z"/></clipPath></defs>
+          <g class="steam"><path d="M85 58q-10-14 0-26t0-24"/><path d="M110 58q-10-14 0-26t0-24"/><path d="M135 58q-10-14 0-26t0-24"/></g>
+          <ellipse cx="110" cy="196" rx="86" ry="12" fill="var(--line)"/>
+          <path d="M170 90h14a22 22 0 0 1 0 44h-18" fill="none" stroke="var(--fg)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M50 70H170V128Q170 176 110 176Q50 176 50 128Z" fill="var(--surface)"/>
+          <g clip-path="url(#inside)"><rect id="liquid" x="40" y="106" width="140" height="80" fill="#8a5a36"/></g>
+          <path d="M50 70H170V128Q170 176 110 176Q50 176 50 128Z" fill="none" stroke="var(--fg)" stroke-width="6" stroke-linejoin="round"/>
+          <rect x="44" y="64" width="132" height="10" rx="5" fill="var(--fg)"/>
+          <path d="M72 148q10 10 28 12" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+        <div class="name" id="name">Normal chai</div>
+        <p class="sub" id="summary"></p>
+        <div class="meters">
+          <div class="meter"><span class="label">Kadakpan</span><div class="bar"><i id="m-kadak"></i></div></div>
+          <div class="meter"><span class="label">Meethaas</span><div class="bar g"><i id="m-meetha"></i></div></div>
+          <div class="meter"><span class="label">Malai</span><div class="bar"><i id="m-malai"></i></div></div>
+        </div>
+      </div>
+
+      <form class="controls" id="form" autocomplete="off">
+        <fieldset>
+          <legend class="label">Cup ka size</legend>
+          <div class="seg" id="g-size"></div>
+        </fieldset>
+        <fieldset>
+          <legend class="label">Patti</legend>
+          <div class="seg" id="g-patti"></div>
+        </fieldset>
+        <fieldset>
+          <legend class="label">Doodh</legend>
+          <div class="seg" id="g-doodh"></div>
+        </fieldset>
+        <fieldset>
+          <legend class="label">Cheeni</legend>
+          <div class="step">
+            <button type="button" id="less" aria-label="Cheeni kam karo">−</button>
+            <output id="sugar" aria-live="polite"></output>
+            <button type="button" id="more" aria-label="Cheeni barhao">+</button>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend class="label">Masalay (har ek +20 rupay)</legend>
+          <div class="seg" id="g-add"></div>
+        </fieldset>
+        <div class="total">
+          <div class="price" id="price">Rs 100<small>sirf misaal</small></div>
+          <button type="submit" class="primary">Chotu ko parchi do</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="slip" id="slip" hidden aria-live="polite">
+      <span class="label" style="color:var(--accent)" id="token"></span>
+      <h3>Parchi tayar hai</h3>
+      <pre id="slipText"></pre>
+      <div class="row">
+        <button type="button" class="ghost" id="copy">Parchi copy karo</button>
+        <span class="sub" id="copied"></span>
+      </div>
+      <p class="sub" style="text-align:left">Yeh demo page hai, parchi kahin bheji nahi jati. Copy karke kisi ko bhi bhej sakte ho.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="board">
+      <div class="sec-head" style="margin-bottom:1rem">
+        <span class="label" style="color:var(--gold)">Dhaba ka menu</span>
+        <h2>Chai ke saath kya chalega</h2>
+      </div>
+      <ul class="menu">
+        <li><b>Doodh patti</b><span class="p">Rs 100</span><span class="d">Pakki hui, gaadhi, saaf kadak.</span></li>
+        <li><b>Kashmiri chai</b><span class="p">Rs 180</span><span class="d">Gulabi rang, badam aur pista ke saath.</span></li>
+        <li><b>Anda paratha</b><span class="p">Rs 220</span><span class="d">Tawa garam, anda taaza.</span></li>
+        <li><b>Bun kabab</b><span class="p">Rs 160</span><span class="d">Imli chutney ke saath, garam garam.</span></li>
+        <li><b>Rusk (4 piece)</b><span class="p">Rs 80</span><span class="d">Chai mein dubone ke liye.</span></li>
+        <li><b>Samosa jodi</b><span class="p">Rs 90</span><span class="d">Aloo wale, chatni muft.</span></li>
+      </ul>
+      <p class="note">Menu aur qeematein sirf misaal hain.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="label" style="color:var(--accent)">Dhaba ke usool</span>
+      <h2>Teen baatein, bas</h2>
+    </div>
+    <div class="rules">
+      <article class="rule"><span class="label tag">Waqt</span><h3>Har waqt chai ka waqt</h3><p>Subah, dopahar, raat aur baqi sab waqt. Dhaba band hona jaanta hi nahi.</p></article>
+      <article class="rule"><span class="label tag">Patti</span><h3>Patti pakne do</h3><p>Jaldi ki chai sirf rang wala paani hoti hai. Kadak ke liye intezaar zaroori hai.</p></article>
+      <article class="rule"><span class="label tag">Baithak</span><h3>Akele mat piyo</h3><p>Ek cup se baat shuru hoti hai. Doosra cup us ke liye jo abhi aaya nahi.</p></article>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Chai Dhaba · demo website</span>
+    <span class="label">Yahan koi order nahi jata</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var SIZES=[{k:'half',l:'Half',p:60,h:.45},{k:'full',l:'Full',p:100,h:.7},{k:'dabal',l:'Dabal',p:180,h:.92}];
+  var PATTI=['Halki','Normal','Kadak'];
+  var DOODH=['Kam doodh','Theek doodh','Zyada doodh'];
+  var ADDS=[{k:'elaichi',l:'Elaichi'},{k:'adrak',l:'Adrak'},{k:'saunf',l:'Saunf'}];
+  var st={size:1,patti:1,doodh:1,cheeni:2,add:{elaichi:true,adrak:false,saunf:false}};
+
+  function $(id){return document.getElementById(id)}
+  function radios(host,name,items,getKey,label,checked){
+    var h='';
+    items.forEach(function(it,i){
+      var id=name+'-'+i;
+      h+='<input type="radio" name="'+name+'" id="'+id+'" value="'+i+'"'+(i===checked?' checked':'')+'><label for="'+id+'">'+label(it)+'</label>';
+    });
+    $(host).innerHTML=h;
+  }
+  radios('g-size','size',SIZES,null,function(s){return s.l+' · Rs '+s.p},st.size);
+  radios('g-patti','patti',PATTI,null,function(s){return s},st.patti);
+  radios('g-doodh','doodh',DOODH,null,function(s){return s},st.doodh);
+  var ah='';
+  ADDS.forEach(function(a){
+    ah+='<input type="checkbox" id="add-'+a.k+'" value="'+a.k+'"'+(st.add[a.k]?' checked':'')+'><label for="add-'+a.k+'">'+a.l+'</label>';
+  });
+  $('g-add').innerHTML=ah;
+
+  function lerp(a,b,t){return Math.round(a+(b-a)*t)}
+  function teaColor(){
+    var light=0.5+0.32*(st.doodh-1)-0.3*(st.patti-1);
+    light=Math.max(.08,Math.min(.92,light));
+    return 'rgb('+lerp(58,206,light)+','+lerp(28,152,light)+','+lerp(12,104,light)+')';
+  }
+  function addList(){return ADDS.filter(function(a){return st.add[a.k]}).map(function(a){return a.l})}
+  function chaiName(){
+    var ad=addList();
+    return PATTI[st.patti]+(ad.length?' '+ad.join('-'):'')+' chai';
+  }
+  function cheeniText(){return st.cheeni===0?'Bina cheeni':st.cheeni+(st.cheeni===1?' chamach':' chamach')+' cheeni'}
+  function total(){return SIZES[st.size].p+20*addList().length}
+  function summary(){
+    return SIZES[st.size].l+' cup · '+DOODH[st.doodh].toLowerCase()+' · '+cheeniText().toLowerCase();
+  }
+
+  function render(){
+    var h=SIZES[st.size].h, top=70, inner=106;
+    var ht=Math.round(inner*h), y=176-ht;
+    var L=$('liquid'); L.setAttribute('y',y); L.setAttribute('height',ht+20); L.setAttribute('fill',teaColor());
+    $('name').textContent=chaiName();
+    $('summary').textContent=summary();
+    $('sugar').textContent=cheeniText();
+    $('price').innerHTML='Rs '+total()+'<small>sirf misaal</small>';
+    $('m-kadak').style.width=(20+st.patti*40)+'%';
+    $('m-meetha').style.width=(st.cheeni/5*100)+'%';
+    $('m-malai').style.width=(20+st.doodh*40)+'%';
+  }
+
+  $('form').addEventListener('change',function(e){
+    var t=e.target;
+    if(t.name==='size')st.size=+t.value;
+    else if(t.name==='patti')st.patti=+t.value;
+    else if(t.name==='doodh')st.doodh=+t.value;
+    else if(t.id&&t.id.indexOf('add-')===0)st.add[t.value]=t.checked;
+    render();
+  });
+  $('less').addEventListener('click',function(){st.cheeni=Math.max(0,st.cheeni-1);render()});
+  $('more').addEventListener('click',function(){st.cheeni=Math.min(5,st.cheeni+1);render()});
+
+  var slipEl=$('slip');
+  $('form').addEventListener('submit',function(e){
+    e.preventDefault();
+    var n=100+Math.floor(Math.random()*900);
+    var ad=addList();
+    var lines=[
+      'Token #'+n,
+      chaiName()+' · '+SIZES[st.size].l,
+      DOODH[st.doodh]+', '+cheeniText().toLowerCase(),
+      'Masalay: '+(ad.length?ad.join(', '):'koi nahi'),
+      'Total: Rs '+total()
+    ];
+    $('token').textContent='Token #'+n;
+    $('slipText').textContent=lines.join('\n');
+    $('copied').textContent='';
+    slipEl.hidden=false;
+    slipEl.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+  });
+
+  $('copy').addEventListener('click',function(){
+    var txt=$('slipText').textContent, out=$('copied');
+    function fallback(){
+      var r=document.createRange();r.selectNodeContents($('slipText'));
+      var s=window.getSelection();s.removeAllRanges();s.addRange(r);
+      out.textContent='Text select ho gaya, ab copy kar lo.';
+    }
+    try{
+      navigator.clipboard.writeText(txt).then(function(){out.textContent='Copy ho gaya.'},fallback);
+    }catch(err){fallback()}
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
