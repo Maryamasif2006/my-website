@@ -89,6 +89,9 @@ legend{padding:0;margin-bottom:.5rem}
 button.primary{background:var(--accent);color:var(--accent-fg);border:0;border-radius:6px;padding:.9rem 1.5rem;font-weight:700;font-size:1rem;cursor:pointer;font-family:var(--f-body)}
 button.primary:hover{filter:brightness(1.08)}
 button.primary:focus-visible,button.ghost:focus-visible{outline:3px solid var(--fg);outline-offset:3px}
+a.wa{display:inline-block;background:#1FA855;color:#fff;font-weight:700;text-decoration:none;padding:.8rem 1.3rem;border-radius:6px}
+a.wa:hover{filter:brightness(1.08)}
+a.wa:focus-visible{outline:3px solid var(--fg);outline-offset:3px}
 button.ghost{background:transparent;border:2px solid var(--fg);color:var(--fg);border-radius:6px;padding:.5rem .9rem;cursor:pointer;font-family:var(--f-body);font-weight:500}
 
 .slip{margin-top:1.5rem;background:var(--surface);border:2px dashed var(--fg);border-radius:4px;padding:1.2rem 1.4rem;display:grid;gap:.6rem}
@@ -192,21 +195,22 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 2rem;justify-content:space-be
           <div class="seg" id="g-add"></div>
         </fieldset>
         <div class="total">
-          <div class="price" id="price">Rs 100<small>sirf misaal</small></div>
-          <button type="submit" class="primary">Chotu ko parchi do</button>
+          <div class="price" id="price">Rs 100</div>
+          <button type="submit" class="primary">WhatsApp par order bhejo</button>
         </div>
       </form>
     </div>
 
     <div class="slip" id="slip" hidden aria-live="polite">
       <span class="label" style="color:var(--accent)" id="token"></span>
-      <h3>Parchi tayar hai</h3>
+      <h3>Order tayar hai</h3>
       <pre id="slipText"></pre>
       <div class="row">
+        <a class="wa" id="wa" href="#" target="_blank" rel="noopener">WhatsApp kholo</a>
         <button type="button" class="ghost" id="copy">Parchi copy karo</button>
         <span class="sub" id="copied"></span>
       </div>
-      <p class="sub" style="text-align:left">Yeh demo page hai, parchi kahin bheji nahi jati. Copy karke kisi ko bhi bhej sakte ho.</p>
+      <p class="sub" style="text-align:left">WhatsApp khul jaye to Send dabao. Na khule to upar wala hara button dabao.</p>
     </div>
   </div>
 </section>
@@ -249,7 +253,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 2rem;justify-content:space-be
 <footer>
   <div class="wrap">
     <span>Chai Dhaba · demo website</span>
-    <span class="label">Yahan koi order nahi jata</span>
+    <span class="label">Order WhatsApp par aata hai</span>
   </div>
 </footer>
 
@@ -259,6 +263,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 2rem;justify-content:space-be
   var PATTI=['Halki','Normal','Kadak'];
   var DOODH=['Kam doodh','Theek doodh','Zyada doodh'];
   var ADDS=[{k:'elaichi',l:'Elaichi'},{k:'adrak',l:'Adrak'},{k:'saunf',l:'Saunf'}];
+  var WA_NUMBER='923105369383';
   var st={size:1,patti:1,doodh:1,cheeni:2,add:{elaichi:true,adrak:false,saunf:false}};
 
   function $(id){return document.getElementById(id)}
@@ -303,7 +308,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 2rem;justify-content:space-be
     $('name').textContent=chaiName();
     $('summary').textContent=summary();
     $('sugar').textContent=cheeniText();
-    $('price').innerHTML='Rs '+total()+'<small>sirf misaal</small>';
+    $('price').textContent='Rs '+total();
     $('m-kadak').style.width=(20+st.patti*40)+'%';
     $('m-meetha').style.width=(st.cheeni/5*100)+'%';
     $('m-malai').style.width=(20+st.doodh*40)+'%';
@@ -335,7 +340,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 2rem;justify-content:space-be
     $('token').textContent='Token #'+n;
     $('slipText').textContent=lines.join('\n');
     $('copied').textContent='';
+    var waUrl='https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent('Assalam o Alaikum, mujhe yeh order chahiye:\n\n'+lines.join('\n'));
+    $('wa').href=waUrl;
     slipEl.hidden=false;
+    try{window.open(waUrl,'_blank','noopener')}catch(err){}
     slipEl.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
   });
 
